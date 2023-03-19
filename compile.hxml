@@ -1,0 +1,6 @@
+-cp src
+-cp 3rd
+-lib heaps
+-lib hldx
+-hl PEngineDemo.hl
+-main Main

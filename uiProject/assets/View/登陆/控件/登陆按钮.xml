@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="340,115" extention="Button" hitTest="n0_e5g0">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="0"/>
+  <displayList>
+    <image id="n0_e5g0" name="n0" src="e5g05" fileName="登陆/资源/UI_Button_Blue.png" xy="0,0" size="340,115">
+      <gearDisplay controller="button" pages="0"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <image id="n1_e5g0" name="n1" src="e5g07" fileName="登陆/资源/UI_Button_Green.png" xy="0,0" size="340,115">
+      <gearDisplay controller="button" pages="1"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <image id="n2_e5g0" name="n2" src="e5g09" fileName="登陆/资源/UI_Button_Grey.png" xy="0,0" size="340,115">
+      <gearDisplay controller="button" pages="2"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <image id="n3_e5g0" name="n3" src="e5g0a" fileName="登陆/资源/UI_Button_Red.png" xy="0,0" size="340,115">
+      <gearDisplay controller="button" pages="3"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <text id="n5_e5g0" name="n5" xy="132,33" size="76,49" fontSize="36" color="#ffffff" text="登陆"/>
+  </displayList>
+  <Button/>
+</component>

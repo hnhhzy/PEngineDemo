@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1920,1080">
+  <displayList>
+    <image id="n1_e5g0" name="n1" src="e5g01" fileName="登陆/资源/Background.png" xy="0,0">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <text id="n3_e5g0" name="n3" xy="791,351" size="314,40" group="n4_e5g0" fontSize="28" color="#ffffff" leading="1" autoSize="none" text="账号："/>
+    <component id="n2_e5g0" name="n2" src="e5g04" fileName="登陆/控件/输入框1.xml" xy="790,418" group="n4_e5g0"/>
+    <text id="n12_e5g0" name="txtAccount" xy="806,426" size="307,54" group="n4_e5g0" fontSize="36" color="#ffffff" leading="1" autoSize="none" text="" input="true"/>
+    <group id="n4_e5g0" name="账号" xy="790,351" size="340,136"/>
+    <text id="n5_e5g0" name="n5" xy="791,508" size="314,40" group="n7_e5g0" fontSize="28" color="#ffffff" leading="1" autoSize="none" text="密码："/>
+    <component id="n6_e5g0" name="n6" src="e5g04" fileName="登陆/控件/输入框1.xml" xy="790,574" group="n7_e5g0"/>
+    <text id="n11_e5g0" name="txtPassword" xy="806,582" size="309,54" group="n7_e5g0" fontSize="36" color="#ffffff" leading="1" autoSize="none" text="" input="true"/>
+    <group id="n7_e5g0" name="密码" xy="790,508" size="340,136"/>
+    <component id="n8_e5g0" name="btnLogin" src="e5g06" fileName="登陆/控件/登陆按钮.xml" xy="791,689" group="n10_e5g0"/>
+    <group id="n10_e5g0" name="登录" xy="791,689" size="340,115"/>
+  </displayList>
+</component>

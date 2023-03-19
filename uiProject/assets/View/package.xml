@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="fp95u1e6">
+  <resources>
+    <component id="p70y0" name="Login.xml" path="/登陆/" exported="true"/>
+    <image id="e5g01" name="Background.png" path="/登陆/资源/"/>
+    <image id="e5g03" name="UI_Bar.png" path="/登陆/资源/" scale="9grid" scale9grid="15,15,32,33"/>
+    <component id="e5g04" name="输入框1.xml" path="/登陆/控件/"/>
+    <image id="e5g05" name="UI_Button_Blue.png" path="/登陆/资源/" scale="9grid" scale9grid="16,16,32,32"/>
+    <component id="e5g06" name="登陆按钮.xml" path="/登陆/控件/"/>
+    <image id="e5g07" name="UI_Button_Green.png" path="/登陆/资源/" scale="9grid" scale9grid="16,16,32,32"/>
+    <image id="e5g09" name="UI_Button_Grey.png" path="/登陆/资源/" scale="9grid" scale9grid="16,16,32,32"/>
+    <image id="e5g0a" name="UI_Button_Red.png" path="/登陆/资源/" scale="9grid" scale9grid="16,16,32,32"/>
+  </resources>
+  <publish name="" path="..\res\ui" packageCount="2" genCode="true" codePath="..\src\ui"/>
+</packageDescription>
