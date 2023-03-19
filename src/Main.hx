@@ -15,7 +15,7 @@ class Main extends hxd.App {
         super.init();
 
         var assets = new Assets(); 
-        assets.loadFile("res/ui/view.pui");
+        assets.loadFile("res/ui/View.pui");
         assets.start(onAssetsLoaded);
         //m_mainPanel = new MainPanel(s2d);
         //s2d.addChild(m_mainPanel);
