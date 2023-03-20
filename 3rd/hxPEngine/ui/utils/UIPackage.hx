@@ -25,6 +25,18 @@ class UIPackage {
         _hitTestDatas = new Map<String, PixelHitTestData>();
     }
 
+    public static function getById(id : String) : UIPackage {
+        return _packageInstById[id];
+    }
+
+    public function getItemById(itemId : String) : PackageItem {
+        return _itemsById[itemId];
+    }
+    
+    public function getItemByName(resName : String) : PackageItem {
+        return _itemsByName[resName];
+    }
+
     public static function addPackage(data : Bytes) : UIPackage {
             var pkg : UIPackage = new UIPackage();
             //var reader : ZipUIPackageReader = new ZipUIPackageReader(desc, res);
@@ -137,7 +149,6 @@ class UIPackage {
                 //_bitmapFonts[pi.bitmapFont.id] = pi.bitmapFont;
             }
         }
-
     }
 
     public static function getByName(name : String) : UIPackage {
@@ -183,4 +194,42 @@ class UIPackage {
         g.packageItem = item;
         return g;
     }
+
+
+    public static function getItemByURL(url : String) : PackageItem {
+        if (url == null)
+            return null;
+
+        var pos1:Int = url.indexOf("//");
+        if (pos1 == -1)
+            return null;
+        var pkg:UIPackage;
+        var pos2:Int = url.indexOf("/", pos1 + 2);
+        if (pos2 == -1)
+        {
+            if (url.length > 13)
+            {
+                var pkgId:String = url.substr(5, 8);
+                pkg = getById(pkgId);
+                if (pkg != null)
+                {
+                    var srcId:String = url.substr(13);
+                    return pkg.getItemById(srcId);
+                }
+            }
+        }
+        else
+        {
+            var pkgName:String = url.substr(pos1 + 2, pos2 - pos1 - 2);
+            pkg = getByName(pkgName);
+            if (pkg != null)
+            {
+                var srcName:String = url.substr(pos2 + 1);
+                return pkg.getItemByName(srcName);
+            }
+        }
+
+        return null;
+    }
+    
 }

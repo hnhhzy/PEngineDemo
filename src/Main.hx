@@ -24,6 +24,7 @@ class Main extends hxd.App {
     function onAssetsLoaded(f:Float) {
         if (f == 1) {
             trace("assets loaded");
+            ui.view.ViewBinder.bindAll();
             m_mainPanel = new MainPanel(s2d);
         }
     }
