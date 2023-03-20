@@ -17,6 +17,8 @@ class PackageItem {
     public var tileGridIndice : Int = 0;
 
     //componenet
+    public var componentData : haxe.xml.Access;
+    public var displayList : Array<DisplayListItem>;
     public var extensionType:Class<Dynamic>;
 
 

@@ -20,6 +20,8 @@ class UIPackage {
 
     private var _entries:List<haxe.zip.Entry>;
 
+    private static var _stringsSource : Map<String, Dynamic>;
+
     public function new() {
         _items = new Array<PackageItem>();
         _hitTestDatas = new Map<String, PixelHitTestData>();
@@ -35,6 +37,202 @@ class UIPackage {
     
     public function getItemByName(resName : String) : PackageItem {
         return _itemsByName[resName];
+    }
+
+    private function getXMLDesc(file : String) : haxe.xml.Access{
+
+        var _entry = ZipUtils.readDescFile(_entries, file);
+        if(_entry == null) {
+            trace(file + " not found");
+            return null;
+        }
+
+        var str = _entry.data.toString();        
+        var sxml:Xml = Xml.parse(str);
+        var xml = new haxe.xml.Access(sxml.firstChild());
+        return xml;
+    }
+
+    public function getComponentData(item : PackageItem) : haxe.xml.Access {
+        if (item.componentData == null)
+        {
+            var xml : haxe.xml.Access = getXMLDesc(item.id + ".xml");
+            
+            item.componentData = xml;
+            
+            loadComponentChildren(item);
+            translateComponent(item);
+        }
+        
+        return item.componentData;
+    }
+
+    private function loadComponentChildren(item : PackageItem) : Void {
+        //var listNode = item.componentData.node.displayList;
+        var listNode = try item.componentData.node.displayList catch (e:Dynamic) null;
+        //trace(listNode);
+        if (listNode != null) {
+            var col : Iterator<haxe.xml.Access> = listNode.elements;
+            item.displayList = new Array<DisplayListItem>();
+            var di : DisplayListItem;
+            for (cxml in col) {
+                var tagName : String = cxml.name;
+                //var src : String = cxml.att.src;
+                var src = try cxml.att.src catch (e:Dynamic) null;
+                if (src != null) {
+                    //trace(cxml);
+                    //var pkgId : String = cxml.att.pkg;
+                    var pkgId = try cxml.att.pkg catch (e:Dynamic) null;
+                    var pkg : UIPackage;
+                    if (pkgId != null && pkgId != item.owner.id)  {
+                        pkg = UIPackage.getById(pkgId);
+                    } else {
+                        pkg = item.owner;
+                    }
+
+                    var pi : PackageItem = (pkg != null) ? pkg.getItemById(src) : null;
+                    if (pi != null) {
+                        di = new DisplayListItem(pi, null);
+                    } else {
+                        di = new DisplayListItem(null, tagName);
+                    }
+                } else {
+                    var input = try cxml.att.input catch (e:Dynamic) "false";
+                    if (tagName == "text" && input == "true") {
+                        di = new DisplayListItem(null, "inputtext");
+                    } else {
+                        di = new DisplayListItem(null, tagName);
+                    }
+                }
+
+                di.desc = cxml;
+                item.displayList.push(di);
+
+            }
+        } else {
+            item.displayList = new Array<DisplayListItem>();
+        }
+    }
+
+    private function translateComponent(item:PackageItem) : Void {
+        if(_stringsSource==null) {
+            return;
+        }
+
+        var strings:Map<String, Dynamic> = _stringsSource[this.id + item.id];
+        if(strings==null) {
+            return;
+        }
+        var cnt:Int = item.displayList.length;
+        var value:Dynamic;
+        var cxml:haxe.xml.Access;
+        var dxml:haxe.xml.Access;
+        for(i in 0...cnt) {
+            cxml = item.displayList[i].desc;
+            var ename : String = cxml.name;
+            var elementId : String = cxml.att.id;
+
+            if (cxml.att.resolve("tooltips").length > 0) {
+                value = strings[elementId + "-tips"];
+                if (value != null) {
+                    // cxml.setAttribute("tooltips", value);
+                    // 检查结果
+                    cxml.setProperty("tooltips", value);
+                }
+            }
+            dxml = cxml.node.gearText;
+            if (dxml != null) {
+                value = strings[elementId+"-texts"];
+                if(value!=null) {
+                    //dxml.setAttribute("values", value);
+                    dxml.setProperty("values", value);
+                }
+
+                value = strings[elementId+"-texts_def"];
+                if(value!=null) {
+                    //dxml.setAttribute("default", value);
+                    dxml.setProperty("default", value);
+                }
+            }
+
+            var items : Array<haxe.xml.Access>;
+            var j : Int;
+            if (ename == "text" || ename == "richtext") {
+                value = strings[elementId];
+                if (value != null) {
+                    //cxml.setAttribute("text", value);
+                    cxml.setProperty("text", value);
+                }
+                value = strings[elementId + "-prompt"];
+                if (value != null) {
+                    //cxml.setAttribute("prompt", value);
+                    cxml.setProperty("prompt", value);
+                }
+            } else if (ename == "list") {
+                items = cxml.nodes.item;
+                j = 0;
+                for (exml in items.iterator()) {
+                    value = strings[elementId + "-" + j];
+                    if (value != null) {
+                        //exml.setAttribute("title", value);
+                        exml.setProperty("title", value);
+                    }
+                    j++;
+                }
+            } else if (ename == "component") {
+                dxml = cxml.node.Button;
+                if (dxml != null) {
+                    value = strings[elementId];
+                    if (value != null) {
+                        //dxml.setAttribute("title", value);
+                        dxml.setProperty("title", value);
+                    }
+                    value = strings[elementId + "-0"];
+                    if (value != null) {
+                        //dxml.setAttribute("selectedTitle", value);
+                        dxml.setProperty("selectedTitle", value);
+                    }
+                    continue;
+                }
+
+                dxml = cxml.node.Label;
+                if (dxml != null) {
+                    value = strings[elementId];
+                    if (value != null) {
+                        //dxml.setAttribute("title", value);
+                        dxml.setProperty("title", value);
+                    }
+                    value = strings[elementId+"-prompt"];
+                    if(value!=null) {
+                        //dxml.setAttribute("prompt", value);
+                        dxml.setProperty("prompt", value);
+                    }
+                    continue;
+                }
+
+                dxml = cxml.node.ComboBox;
+                if (dxml != null) {
+                    value = strings[elementId];
+                    if (value != null) {
+                        //dxml.setAttribute("title", value);
+                        dxml.setProperty("title", value);
+                    }
+
+                    items = dxml.nodes.item;
+                    j = 0;
+                    for (exml in items.iterator()) {
+                        value = strings[elementId + "-" + j];
+                        if (value != null) {
+                            //exml.setAttribute("title", value);
+                            exml.setProperty("title", value);
+                        }
+                        j++;
+                    }
+                    continue;
+                }
+            }
+        }
+
     }
 
     public static function addPackage(data : Bytes) : UIPackage {
@@ -68,7 +266,11 @@ class UIPackage {
         id = xml.att.id;
         name = xml.att.name;
 
-        var resources:Iterator<haxe.xml.Access> = xml.node.resolve("resources").elements;
+        var ret = xml.node.resolve("resources");
+        var resources:Iterator<haxe.xml.Access>  = null;
+        if(ret != null) {
+            resources = ret.elements;
+        }
 
         _itemsById = new Map<String, PackageItem>();
         _itemsByName = new Map<String, PackageItem>();
@@ -78,55 +280,58 @@ class UIPackage {
         var arr : Array<String>;
 
         // https://github.com/rakuten/FairyGUI-haxe/blob/master/src/fairygui/UIPackage.hx
-        for (cxml in resources) {
-            pi = new PackageItem();
-            pi.owner = this;
-            pi.type = PackageItemType.parseType(cxml.name);
-            pi.id = cxml.att.id;
-            pi.name = cxml.att.name;
-            pi.file = try cxml.att.file catch (e:Dynamic) null;
-            var sizeStr = try cxml.att.size catch (e:Dynamic) null;
-            if (sizeStr != null) {
-                arr = sizeStr.split(",");
-                pi.width = Std.parseInt(arr[0]);
-                pi.height = Std.parseInt(arr[1]);
-            }
+        if(resources != null) {
+            for (cxml in resources) {
+                pi = new PackageItem();
+                pi.owner = this;
+                pi.type = PackageItemType.parseType(cxml.name);
+                pi.id = cxml.att.id;
+                pi.name = cxml.att.name;
+                // 待补，新编辑器是.src不是file
+                pi.file = try cxml.att.file catch (e:Dynamic) null;
+                var sizeStr = try cxml.att.size catch (e:Dynamic) null;
+                if (sizeStr != null) {
+                    arr = sizeStr.split(",");
+                    pi.width = Std.parseInt(arr[0]);
+                    pi.height = Std.parseInt(arr[1]);
+                }
 
-            switch (pi.type) {
-                case PackageItemType.Image: {
-                    str = try cxml.att.scale catch(e:Dynamic) null;
-                    if (str == "9grid") {
-                        pi.scale9Grid = new hxd.clipper.Rect();
-                        str = cxml.att.scale9grid;
-                        arr = str.split(",");
-                        pi.scale9Grid.left = Std.parseInt(arr[0]);
-                        pi.scale9Grid.top = Std.parseInt(arr[1]);
-                        pi.scale9Grid.right = Std.parseInt(arr[2]);
-                        pi.scale9Grid.bottom = Std.parseInt(arr[3]);
-                        
-                        str = try cxml.att.gridTile catch(e:Dynamic) null;
-                        if (str != null) {
-                            pi.tileGridIndice = Std.parseInt(str);
+                switch (pi.type) {
+                    case PackageItemType.Image: {
+                        str = try cxml.att.scale catch(e:Dynamic) null;
+                        if (str == "9grid") {
+                            pi.scale9Grid = new hxd.clipper.Rect();
+                            str = cxml.att.scale9grid;
+                            arr = str.split(",");
+                            pi.scale9Grid.left = Std.parseInt(arr[0]);
+                            pi.scale9Grid.top = Std.parseInt(arr[1]);
+                            pi.scale9Grid.right = Std.parseInt(arr[2]);
+                            pi.scale9Grid.bottom = Std.parseInt(arr[3]);
+                            
+                            str = try cxml.att.gridTile catch(e:Dynamic) null;
+                            if (str != null) {
+                                pi.tileGridIndice = Std.parseInt(str);
+                            }
+                        } else if (str == "tile") {
+                            pi.scaleByTile = true;
                         }
-                    } else if (str == "tile") {
-                        pi.scaleByTile = true;
+                        str = try cxml.att.smoothing catch(e:Dynamic) null;
+                        pi.smoothing = str != "false";
                     }
-                    str = try cxml.att.smoothing catch(e:Dynamic) null;
-                    pi.smoothing = str != "false";
+                    case PackageItemType.MovieClip: {
+                        str = try cxml.att.smoothing catch(e:Dynamic) null;
+                        pi.smoothing = str != "false";
+                    }
+                    case PackageItemType.Component: {
+                        //UIObjectFactory.resolvePackageItemExtension(pi);
+                    }
                 }
-                case PackageItemType.MovieClip: {
-                    str = try cxml.att.smoothing catch(e:Dynamic) null;
-                    pi.smoothing = str != "false";
-                }
-                case PackageItemType.Component: {
-                    //UIObjectFactory.resolvePackageItemExtension(pi);
-                }
+                _items.push(pi);
+                _itemsById[pi.id] = pi;
+                if (pi.name != null) {
+                    _itemsByName[pi.name] = pi;
+                }            
             }
-            _items.push(pi);
-            _itemsById[pi.id] = pi;
-            if (pi.name != null) {
-                _itemsByName[pi.name] = pi;
-            }            
         }
 
         var ba:Bytes = ZipUtils.readResFile(_entries, "hittest.bytes");
@@ -190,8 +395,11 @@ class UIPackage {
         
         if (g == null) 
             return null;
-        
+
+        _constructing++;
         g.packageItem = item;
+        g.constructFromResource();
+        _constructing--;
         return g;
     }
 

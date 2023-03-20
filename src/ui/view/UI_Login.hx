@@ -14,7 +14,7 @@ class UI_Login extends GComponent {
         return cast(UIPackage.createObject("View", "Login"), UI_Login);
     }
 
-    private override function constructFromXML(xml:FastXML):Void {
+    private override function constructFromXML(xml:haxe.xml.Access):Void {
         super.constructFromXML(xml);
 
         m_txtAccount = cast(this.getChild("txtAccount"), GTextInput);
