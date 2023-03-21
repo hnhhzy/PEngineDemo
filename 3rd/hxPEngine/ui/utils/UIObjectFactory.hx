@@ -16,7 +16,7 @@ class UIObjectFactory {
                 return new GMovieClip();
             }
             case PackageItemType.Swf: {
-                return new GSwf();
+                return new GSwfObject();
             }
             case PackageItemType.Component: {
                 var cls : Class<Dynamic> = pi.extensionType;
@@ -25,7 +25,8 @@ class UIObjectFactory {
                 }
 
                 var xml : haxe.xml.Access = pi.owner.getComponentData(pi);
-                var extention : String = xml.att.extention;
+                //var extention : String = xml.att.extention;
+                var extention = try xml.att.extention catch (e:Dynamic) null;
                 if (extention != null) {
                     switch (extention) {
                         case "Button": {
@@ -68,34 +69,34 @@ class UIObjectFactory {
                 return new GMovieClip();
             
             case "swf":
-                //return new GSwfObject();
+                return new GSwfObject();
             
             case "component":
                 return new GComponent();
             
             case "text":
-                //return new GTextField();
+                return new GTextField();
             
             case "richtext":
-                //return new GRichTextField();
+                return new GRichTextField();
             
             case "inputtext":
                 return new GTextInput();
             
             case "group":
-                //return new GGroup();
+                return new GGroup();
             
             case "list":
-                //return new GList();
+                return new GList();
             
             case "graph":
-                //return new GGraph();
+                return new GGraph();
             
             case "loader":
                 if (loaderType != null)
                     return Type.createInstance(loaderType, []);
                 else {
-                    //return new GLoader();
+                    return new GLoader();
                 }
         }
         return null;

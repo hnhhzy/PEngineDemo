@@ -1,6 +1,6 @@
 package hxPEngine.ui.component;
 
-class GLabel extends GObject {
+class GGraph extends GObject {
     public function new(?parent:h2d.Object) {
         super(parent);
     }

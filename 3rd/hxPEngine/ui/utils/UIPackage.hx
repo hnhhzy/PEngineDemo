@@ -56,7 +56,8 @@ class UIPackage {
     public function getComponentData(item : PackageItem) : haxe.xml.Access {
         if (item.componentData == null)
         {
-            var xml : haxe.xml.Access = getXMLDesc(item.id + ".xml");
+            //var xml : haxe.xml.Access = getXMLDesc(item.id + ".xml");
+            var xml = try getXMLDesc(item.id + ".xml") catch (e:Dynamic) null;
             
             item.componentData = xml;
             

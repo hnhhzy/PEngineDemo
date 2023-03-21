@@ -110,7 +110,8 @@ class GObject extends h2d.Object {
 
 
     public function setup_afterAdd(xml:haxe.xml.Access):Void {
-        var s:String = xml.att.group;
+        //var s:String = xml.att.group;
+        var s:String = try xml.att.group catch (e:Dynamic) null;
         // 待补
         // if (s != null)
         //     _group = try cast(_parent.getChildById(s), GGroup)
@@ -196,7 +197,8 @@ class GObject extends h2d.Object {
         //if (xml.att.grayed == "true")
         if ((try xml.att.grayed catch (e:Dynamic) "false") == "true")
             this.grayed = true;
-        this.tooltips = xml.att.tooltips;
+        //this.tooltips = xml.att.tooltips;        
+        this.tooltips = try xml.att.tooltips catch (e:Dynamic) "";
 
         //str = xml.att.blend;
         str = try xml.att.blend catch (e:Dynamic) null;
